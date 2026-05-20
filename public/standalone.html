@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classic Games Arcade - ألعاب كلاسيكية مجانية</title>
+  <meta name="description" content="العب 10 ألعاب ألغاز وألعاب لوحية كلاسيكية مجاناً!">
+  
+  <!-- Google AdSense Script - استبدل ca-pub-XXXXXXXXXXXXXXXX بمعرف الناشر الخاص بك -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+      min-height: 100vh;
+      color: #1a1a2e;
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+    
+    /* Ad Banner */
+    .ad-banner {
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      margin: 16px auto;
+      max-width: 728px;
+    }
+    .ad-banner p { color: #666; font-size: 14px; }
+    
+    /* Header */
+    header {
+      text-align: center;
+      padding: 40px 16px;
+    }
+    header h1 {
+      font-size: 2.5rem;
+      color: #1a1a2e;
+      margin-bottom: 8px;
+    }
+    header p { color: #666; font-size: 1.1rem; }
+    
+    /* Games Grid */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px 0 40px;
+    }
+    
+    /* Game Card */
+    .game-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .game-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+    .game-card .icon { font-size: 3rem; margin-bottom: 12px; }
+    .game-card h3 { font-size: 1.2rem; margin-bottom: 8px; color: #1a1a2e; }
+    .game-card p { font-size: 0.9rem; color: #666; margin-bottom: 16px; }
+    .game-card button {
+      background: #4361ee;
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+    .game-card button:hover { background: #3a56d4; }
+    
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow: auto;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid #eee;
+    }
+    .modal-header h2 { font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #666;
+    }
+    .modal-content { padding: 24px; }
+    
+    /* Game Styles */
+    .game-board { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .status { font-size: 1.1rem; font-weight: 600; color: #1a1a2e; }
+    .reset-btn {
+      background: #e63946;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    
+    /* Tic Tac Toe */
+    .ttt-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      gap: 8px;
+    }
+    .ttt-cell {
+      width: 80px;
+      height: 80px;
+      background: #f0f4f8;
+      border: none;
+      border-radius: 12px;
+      font-size: 2.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .ttt-cell:hover { background: #e2e8f0; }
+    .ttt-cell.x { color: #4361ee; }
+    .ttt-cell.o { color: #e63946; }
+    
+    /* Memory Match */
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 60px);
+      gap: 8px;
+    }
+    .memory-cell {
+      width: 60px;
+      height: 60px;
+      background: #4361ee;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: transparent;
+      transition: all 0.3s;
+    }
+    .memory-cell.flipped, .memory-cell.matched {
+      background: white;
+      color: #1a1a2e;
+      border: 2px solid #4361ee;
+    }
+    .memory-cell.matched { background: #d4edda; border-color: #28a745; }
+    
+    /* Sliding Puzzle */
+    .puzzle-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 60px);
+      gap: 4px;
+    }
+    .puzzle-cell {
+      width: 60px;
+      height: 60px;
+      background: #4361ee;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .puzzle-cell.empty { background: transparent; cursor: default; }
+    
+    /* Number Guess */
+    .guess-input {
+      width: 100px;
+      padding: 10px;
+      font-size: 1.2rem;
+      text-align: center;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      margin-left: 10px;
+    }
+    .guess-btn {
+      background: #4361ee;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .hint { color: #666; margin-top: 10px; }
+    
+    /* Lights Out */
+    .lights-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 50px);
+      gap: 4px;
+    }
+    .light-cell {
+      width: 50px;
+      height: 50px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .light-cell.on { background: #ffd60a; box-shadow: 0 0 15px #ffd60a; }
+    .light-cell.off { background: #333; }
+    
+    /* Simon Says */
+    .simon-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 100px);
+      gap: 8px;
+    }
+    .simon-btn {
+      width: 100px;
+      height: 100px;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: all 0.2s;
+    }
+    .simon-btn.active { opacity: 1; transform: scale(1.05); }
+    .simon-btn.red { background: #e63946; }
+    .simon-btn.blue { background: #4361ee; }
+    .simon-btn.green { background: #2a9d8f; }
+    .simon-btn.yellow { background: #f4a261; }
+    
+    /* Hangman */
+    .hangman-word {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .letter-box {
+      width: 35px;
+      height: 45px;
+      border-bottom: 3px solid #1a1a2e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .keyboard {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      max-width: 350px;
+    }
+    .key-btn {
+      width: 32px;
+      height: 36px;
+      border: none;
+      background: #e2e8f0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .key-btn:disabled { opacity: 0.3; }
+    .key-btn.wrong { background: #fee2e2; color: #dc2626; }
+    .key-btn.correct { background: #d1fae5; color: #059669; }
+    
+    /* Word Scramble */
+    .scrambled-word {
+      font-size: 2rem;
+      font-weight: bold;
+      letter-spacing: 8px;
+      color: #4361ee;
+      margin-bottom: 20px;
+    }
+    .word-input {
+      padding: 12px;
+      font-size: 1.2rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      width: 200px;
+      text-align: center;
+    }
+    
+    /* Connect Four */
+    .c4-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 40px);
+      gap: 4px;
+      background: #4361ee;
+      padding: 8px;
+      border-radius: 12px;
+    }
+    .c4-cell {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .c4-cell.red { background: #e63946; }
+    .c4-cell.yellow { background: #ffd60a; }
+    
+    /* Minesweeper */
+    .mine-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 32px);
+      gap: 2px;
+    }
+    .mine-cell {
+      width: 32px;
+      height: 32px;
+      background: #cbd5e1;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+    .mine-cell.revealed { background: #f1f5f9; }
+    .mine-cell.mine { background: #fee2e2; }
+    .mine-cell.flag { background: #fef3c7; }
+    
+    /* Footer */
+    footer {
+      border-top: 1px solid #ddd;
+      padding: 24px;
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Ad Banner -->
+  <div class="container">
+    <div class="ad-banner">
+      <!-- استبدل هذا بكود AdSense الخاص بك -->
+      <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+        data-ad-slot="1234567890"
+        data-ad-format="horizontal"
+        data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      <p>Google AdSense - إعلان علوي</p>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <h1>Classic Games Arcade</h1>
+    <p>العب 10 ألعاب ألغاز وألعاب لوحية كلاسيكية - مجاناً!</p>
+  </header>
+
+  <!-- Games Grid -->
+  <main class="container">
+    <div class="games-grid">
+      <div class="game-card" onclick="openGame('tictactoe')">
+        <div class="icon">⭕</div>
+        <h3>Tic-Tac-Toe</h3>
+        <p>لعبة X و O الكلاسيكية</p>
+        <button>العب الآن</button>
+      </div>
+      
+      <div class="game-card" onclick="openGame('memory')">
+        <div class="icon">🎴</div>
+        <h3>Memory Match</h3>
+        <p>ابحث عن الأزواج المتطابقة</p>
+        <button>العب الآن</button>
+      </div>
+      
+      <div class="game-card" onclick="openGame('puzzle')">
+        <div class="icon">🧩</div>
+        <h3>Sliding Puzzle</h3>
+        <p>رتب الأرقام بالترتيب</p>
+        <button>العب الآن</button>
+      </div>
+      
+      <div class="game-card" onclick="openGame('connect4')">
+        <div class="icon">🔴</div>
+        <h3>Connect Four</h3>
+        <p>اجمع 4 في صف واحد</p>
+        <button>العب الآن</button>
+      </div>
+      
+      <div class="game-card" onclick="openGame('minesweeper')">
+        <div class="icon">💣</div>
+        <h3>Minesweeper</h3>
+        <p>تجنب الألغام</p>
+        <button>العب الآن</button>
+      </div>
+      
+      <div class="game-card" onclick="openGame('simon')">
+        <div class="icon">🎨</div>
+        <h3>Simon Says</h3>
+        <p>كرر النمط اللوني</p>
+        <button>العب الآن</button>
+      </div>
+      
+      <div class="game-card" onclick="openGame('guess')">
+        <div class="icon">🔢</div>
+        <h3>Number Guess</h3>
+        <p>خمن الرقم 1-100</p>
+        <button>العب الآن</button>
+      </div>
+      
+      <div class="game-card" onclick="openGame('hangman')">
+        <div class="icon">📝</div>
+        <h3>Hangman</h3>
+        <p>خمن الكلمة</p>
+        <button>العب الآن</button>
+      </div>
+      
+      <div class="game-card" onclick="openGame('scramble')">
+        <div class="icon">🔤</div>
+        <h3>Word Scramble</h3>
+        <p>أعد ترتيب الحروف</p>
+        <button>العب الآن</button>
+      </div>
+      
+      <div class="game-card" onclick="openGame('lights')">
+        <div class="icon">💡</div>
+        <h3>Lights Out</h3>
+        <p>أطفئ جميع الأضواء</p>
+        <button>العب الآن</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom Ad Banner -->
+  <div class="container">
+    <div class="ad-banner">
+      <!-- استبدل هذا بكود AdSense الخاص بك -->
+      <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+        data-ad-slot="0987654321"
+        data-ad-format="horizontal"
+        data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      <p>Google AdSense - إعلان سفلي</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2024 Classic Games Arcade. جميع الألعاب مجانية.</p>
+    <p>ألعاب HTML5 حديثة مستوحاة من الألعاب الكلاسيكية.</p>
+  </footer>
+
+  <!-- Game Modal -->
+  <div class="modal-overlay" id="gameModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modalTitle"></h2>
+        <button class="close-btn" onclick="closeGame()">&times;</button>
+      </div>
+      <div class="modal-content" id="gameContent"></div>
+    </div>
+  </div>
+
+  <script>
+    // ========== GAME MANAGER ==========
+    function openGame(game) {
+      const modal = document.getElementById('gameModal');
+      const title = document.getElementById('modalTitle');
+      const content = document.getElementById('gameContent');
+      
+      const games = {
+        tictactoe: { title: '⭕ Tic-Tac-Toe', init: initTicTacToe },
+        memory: { title: '🎴 Memory Match', init: initMemory },
+        puzzle: { title: '🧩 Sliding Puzzle', init: initPuzzle },
+        connect4: { title: '🔴 Connect Four', init: initConnect4 },
+        minesweeper: { title: '💣 Minesweeper', init: initMinesweeper },
+        simon: { title: '🎨 Simon Says', init: initSimon },
+        guess: { title: '🔢 Number Guess', init: initGuess },
+        hangman: { title: '📝 Hangman', init: initHangman },
+        scramble: { title: '🔤 Word Scramble', init: initScramble },
+        lights: { title: '💡 Lights Out', init: initLights }
+      };
+      
+      title.innerHTML = games[game].title;
+      games[game].init(content);
+      modal.classList.add('active');
+    }
+    
+    function closeGame() {
+      document.getElementById('gameModal').classList.remove('active');
+    }
+    
+    document.getElementById('gameModal').addEventListener('click', (e) => {
+      if (e.target.id === 'gameModal') closeGame();
+    });
+
+    // ========== TIC TAC TOE ==========
+    function initTicTacToe(container) {
+      let board = Array(9).fill('');
+      let currentPlayer = 'X';
+      let gameOver = false;
+      
+      function render() {
+        container.innerHTML = `
+          <div class="game-board">
+            <div class="status">${gameOver ? (checkWinner() ? `الفائز: ${checkWinner()}` : 'تعادل!') : `دور: ${currentPlayer}`}</div>
+            <div class="ttt-grid">
+              ${board.map((cell, i) => `
+                <button class="ttt-cell ${cell.toLowerCase()}" onclick="tttClick(${i})">${cell}</button>
+              `).join('')}
+            </div>
+            <button class="reset-btn" onclick="initTicTacToe(document.getElementById('gameContent'))">إعادة اللعب</button>
+          </div>
+        `;
+      }
+      
+      window.tttClick = (i) => {
+        if (board[i] || gameOver) return;
+        board[i] = currentPlayer;
+        if (checkWinner() || board.every(c => c)) gameOver = true;
+        else currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        render();
+      };
+      
+      function checkWinner() {
+        const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        for (let [a,b,c] of wins) {
+          if (board[a] && board[a] === board[b] && board[a] === board[c]) return board[a];
+        }
+        return null;
+      }
+      
+      render();
+    }
+
+    // ========== MEMORY MATCH ==========
+    function initMemory(container) {
+      const emojis = ['🎮','🎯','🎲','🎸','🎹','🎺','🎻','🎼'];
+      let cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+      let flipped = [];
+      let matched = [];
+      let moves = 0;
+      
+      function render() {
+        container.innerHTML = `
+          <div class="game-board">
+            <div class="status">المحاولات: ${moves} | المتبقي: ${(16 - matched.length) / 2}</div>
+            <div class="memory-grid">
+              ${cards.map((card, i) => `
+                <button class="memory-cell ${flipped.includes(i) ? 'flipped' : ''} ${matched.includes(i) ? 'matched' : ''}" 
+                  onclick="memoryClick(${i})">${flipped.includes(i) || matched.includes(i) ? card : '?'}</button>
+              `).join('')}
+            </div>
+            <button class="reset-btn" onclick="initMemory(document.getElementById('gameContent'))">إعادة اللعب</button>
+          </div>
+        `;
+      }
+      
+      window.memoryClick = (i) => {
+        if (flipped.includes(i) || matched.includes(i) || flipped.length >= 2) return;
+        flipped.push(i);
+        render();
+        
+        if (flipped.length === 2) {
+          moves++;
+          setTimeout(() => {
+            if (cards[flipped[0]] === cards[flipped[1]]) {
+              matched.push(...flipped);
+            }
+            flipped = [];
+            render();
+          }, 800);
+        }
+      };
+      
+      render();
+    }
+
+    // ========== SLIDING PUZZLE ==========
+    function initPuzzle(container) {
+      let tiles = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0];
+      let moves = 0;
+      
+      // Shuffle
+      for (let i = 0; i < 100; i++) {
+        const empty = tiles.indexOf(0);
+        const neighbors = [];
+        if (empty > 3) neighbors.push(empty - 4);
+        if (empty < 12) neighbors.push(empty + 4);
+        if (empty % 4 !== 0) neighbors.push(empty - 1);
+        if (empty % 4 !== 3) neighbors.push(empty + 1);
+        const swap = neighbors[Math.floor(Math.random() * neighbors.length)];
+        [tiles[empty], tiles[swap]] = [tiles[swap], tiles[empty]];
+      }
+      
+      function render() {
+        const won = tiles.slice(0, 15).every((t, i) => t === i + 1);
+        container.innerHTML = `
+          <div class="game-board">
+            <div class="status">${won ? 'فزت!' : `الحركات: ${moves}`}</div>
+            <div class="puzzle-grid">
+              ${tiles.map((tile, i) => `
+                <button class="puzzle-cell ${tile === 0 ? 'empty' : ''}" onclick="puzzleClick(${i})">
+                  ${tile || ''}
+                </button>
+              `).join('')}
+            </div>
+            <button class="reset-btn" onclick="initPuzzle(document.getElementById('gameContent'))">إعادة اللعب</button>
+          </div>
+        `;
+      }
+      
+      window.puzzleClick = (i) => {
+        const empty = tiles.indexOf(0);
+        const validMoves = [];
+        if (empty > 3) validMoves.push(empty - 4);
+        if (empty < 12) validMoves.push(empty + 4);
+        if (empty % 4 !== 0) validMoves.push(empty - 1);
+        if (empty % 4 !== 3) validMoves.push(empty + 1);
+        
+        if (validMoves.includes(i)) {
+          [tiles[empty], tiles[i]] = [tiles[i], tiles[empty]];
+          moves++;
+          render();
+        }
+      };
+      
+      render();
+    }
+
+    // ========== CONNECT FOUR ==========
+    function initConnect4(container) {
+      let board = Array(42).fill('');
+      let currentPlayer = 'red';
+      let gameOver = false;
+      
+      function render() {
+        container.innerHTML = `
+          <div class="game-board">
+            <div class="status">${gameOver ? `الفائز: ${currentPlayer === 'red' ? 'الأحمر' : 'الأصفر'}` : `دور: ${currentPlayer === 'red' ? 'الأحمر' : 'الأصفر'}`}</div>
+            <div class="c4-grid">
+              ${board.map((cell, i) => `
+                <button class="c4-cell ${cell}" onclick="c4Click(${i % 7})"></button>
+              `).join('')}
+            </div>
+            <button class="reset-btn" onclick="initConnect4(document.getElementById('gameContent'))">إعادة اللعب</button>
+          </div>
+        `;
+      }
+      
+      window.c4Click = (col) => {
+        if (gameOver) return;
+        for (let row = 5; row >= 0; row--) {
+          const i = row * 7 + col;
+          if (!board[i]) {
+            board[i] = currentPlayer;
+            if (checkC4Winner()) gameOver = true;
+            else currentPlayer = currentPlayer === 'red' ? 'yellow' : 'red';
+            render();
+            return;
+          }
+        }
+      };
+      
+      function checkC4Winner() {
+        const lines = [];
+        for (let r = 0; r < 6; r++) for (let c = 0; c < 4; c++) lines.push([r*7+c, r*7+c+1, r*7+c+2, r*7+c+3]);
+        for (let r = 0; r < 3; r++) for (let c = 0; c < 7; c++) lines.push([r*7+c, (r+1)*7+c, (r+2)*7+c, (r+3)*7+c]);
+        for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) lines.push([r*7+c, (r+1)*7+c+1, (r+2)*7+c+2, (r+3)*7+c+3]);
+        for (let r = 0; r < 3; r++) for (let c = 3; c < 7; c++) lines.push([r*7+c, (r+1)*7+c-1, (r+2)*7+c-2, (r+3)*7+c-3]);
+        return lines.some(([a,b,c,d]) => board[a] && board[a] === board[b] && board[a] === board[c] && board[a] === board[d]);
+      }
+      
+      render();
+    }
+
+    // ========== MINESWEEPER ==========
+    function initMinesweeper(container) {
+      const size = 8, mineCount = 10;
+      let board = Array(size * size).fill(null).map(() => ({ mine: false, revealed: false, flag: false, count: 0 }));
+      let gameOver = false, won = false;
+      
+      // Place mines
+      let placed = 0;
+      while (placed < mineCount) {
+        const i = Math.floor(Math.random() * board.length);
+        if (!board[i].mine) { board[i].mine = true; placed++; }
+      }
+      
+      // Count neighbors
+      board.forEach((cell, i) => {
+        if (cell.mine) return;
+        const neighbors = getNeighbors(i, size);
+        cell.count = neighbors.filter(n => board[n].mine).length;
+      });
+      
+      function getNeighbors(i, size) {
+        const row = Math.floor(i / size), col = i % size, n = [];
+        for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+          if (dr === 0 && dc === 0) continue;
+          const nr = row + dr, nc = col + dc;
+          if (nr >= 0 && nr < size && nc >= 0 && nc < size) n.push(nr * size + nc);
+        }
+        return n;
+      }
+      
+      function reveal(i) {
+        if (board[i].revealed || board[i].flag) return;
+        board[i].revealed = true;
+        if (board[i].mine) { gameOver = true; return; }
+        if (board[i].count === 0) getNeighbors(i, size).forEach(reveal);
+      }
+      
+      function render() {
+        const unrevealed = board.filter(c => !c.revealed && !c.mine).length;
+        if (unrevealed === 0 && !gameOver) won = true;
+        
+        container.innerHTML = `
+          <div class="game-board">
+            <div class="status">${gameOver ? 'انفجار! خسرت' : won ? 'فزت!' : 'انقر يمين للعلم'}</div>
+            <div class="mine-grid">
+              ${board.map((cell, i) => `
+                <button class="mine-cell ${cell.revealed ? 'revealed' : ''} ${cell.revealed && cell.mine ? 'mine' : ''} ${cell.flag ? 'flag' : ''}"
+                  onclick="mineClick(${i})" oncontextmenu="mineFlag(${i}); return false;">
+                  ${cell.flag ? '🚩' : cell.revealed ? (cell.mine ? '💣' : cell.count || '') : ''}
+                </button>
+              `).join('')}
+            </div>
+            <button class="reset-btn" onclick="initMinesweeper(document.getElementById('gameContent'))">إعادة اللعب</button>
+          </div>
+        `;
+      }
+      
+      window.mineClick = (i) => { if (!gameOver && !won) { reveal(i); render(); } };
+      window.mineFlag = (i) => { if (!gameOver && !won && !board[i].revealed) { board[i].flag = !board[i].flag; render(); } };
+      
+      render();
+    }
+
+    // ========== SIMON SAYS ==========
+    function initSimon(container) {
+      const colors = ['red', 'blue', 'green', 'yellow'];
+      let sequence = [], playerSeq = [], score = 0, playing = false;
+      
+      function render() {
+        container.innerHTML = `
+          <div class="game-board">
+            <div class="status">النقاط: ${score}</div>
+            <div class="simon-grid">
+              ${colors.map(c => `<button class="simon-btn ${c}" id="simon-${c}" onclick="simonClick('${c}')"></button>`).join('')}
+            </div>
+            <button class="reset-btn" onclick="startSimon()">ابدأ اللعب</button>
+          </div>
+        `;
+      }
+      
+      window.startSimon = () => {
+        sequence = []; playerSeq = []; score = 0;
+        addToSequence();
+      };
+      
+      function addToSequence() {
+        sequence.push(colors[Math.floor(Math.random() * 4)]);
+        playerSeq = [];
+        playing = false;
+        playSequence();
+      }
+      
+      function playSequence() {
+        render();
+        sequence.forEach((color, i) => {
+          setTimeout(() => {
+            const btn = document.getElementById(`simon-${color}`);
+            btn.classList.add('active');
+            setTimeout(() => btn.classList.remove('active'), 300);
+          }, i * 600);
+        });
+        setTimeout(() => { playing = true; }, sequence.length * 600);
+      }
+      
+      window.simonClick = (color) => {
+        if (!playing) return;
+        playerSeq.push(color);
+        const btn = document.getElementById(`simon-${color}`);
+        btn.classList.add('active');
+        setTimeout(() => btn.classList.remove('active'), 200);
+        
+        const i = playerSeq.length - 1;
+        if (playerSeq[i] !== sequence[i]) {
+          alert(`خسرت! النقاط: ${score}`);
+          render();
+          return;
+        }
+        if (playerSeq.length === sequence.length) {
+          score++;
+          setTimeout(addToSequence, 1000);
+        }
+      };
+      
+      render();
+    }
+
+    // ========== NUMBER GUESS ==========
+    function initGuess(container) {
+      let target = Math.floor(Math.random() * 100) + 1;
+      let attempts = 0, hint = 'خمن رقماً بين 1 و 100', won = false;
+      
+      function render() {
+        container.innerHTML = `
+          <div class="game-board">
+            <div class="status">المحاولات: ${attempts}</div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <input type="number" class="guess-input" id="guessInput" min="1" max="100" placeholder="?">
+              <button class="guess-btn" onclick="makeGuess()">خمن</button>
+            </div>
+            <p class="hint">${hint}</p>
+            <button class="reset-btn" onclick="initGuess(document.getElementById('gameContent'))">إعادة اللعب</button>
+          </div>
+        `;
+        if (!won) document.getElementById('guessInput').focus();
+      }
+      
+      window.makeGuess = () => {
+        const input = document.getElementById('guessInput');
+        const guess = parseInt(input.value);
+        if (isNaN(guess) || guess < 1 || guess > 100) { hint = 'أدخل رقماً صحيحاً!'; render(); return; }
+        attempts++;
+        if (guess === target) { hint = `صحيح! الرقم كان ${target}`; won = true; }
+        else if (guess < target) hint = 'أعلى! ⬆️';
+        else hint = 'أقل! ⬇️';
+        render();
+      };
+      
+      render();
+    }
+
+    // ========== HANGMAN ==========
+    function initHangman(container) {
+      const words = ['JAVASCRIPT', 'PROGRAMMING', 'COMPUTER', 'ALGORITHM', 'DATABASE', 'FUNCTION', 'VARIABLE', 'INTERNET'];
+      let word = words[Math.floor(Math.random() * words.length)];
+      let guessed = [], wrong = 0, maxWrong = 6;
+      
+      function render() {
+        const won = word.split('').every(l => guessed.includes(l));
+        const lost = wrong >= maxWrong;
+        
+        container.innerHTML = `
+          <div class="game-board">
+            <div class="status">${won ? 'فزت!' : lost ? `خسرت! الكلمة: ${word}` : `المحاولات المتبقية: ${maxWrong - wrong}`}</div>
+            <div class="hangman-word">
+              ${word.split('').map(l => `<div class="letter-box">${guessed.includes(l) || lost ? l : ''}</div>`).join('')}
+            </div>
+            <div class="keyboard">
+              ${'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l => `
+                <button class="key-btn ${guessed.includes(l) ? (word.includes(l) ? 'correct' : 'wrong') : ''}" 
+                  onclick="hangmanGuess('${l}')" ${guessed.includes(l) || won || lost ? 'disabled' : ''}>${l}</button>
+              `).join('')}
+            </div>
+            <button class="reset-btn" onclick="initHangman(document.getElementById('gameContent'))">إعادة اللعب</button>
+          </div>
+        `;
+      }
+      
+      window.hangmanGuess = (l) => {
+        if (guessed.includes(l)) return;
+        guessed.push(l);
+        if (!word.includes(l)) wrong++;
+        render();
+      };
+      
+      render();
+    }
+
+    // ========== WORD SCRAMBLE ==========
+    function initScramble(container) {
+      const words = ['APPLE', 'BRAIN', 'CLOUD', 'DREAM', 'EARTH', 'FLAME', 'GRAPE', 'HEART', 'IVORY', 'JEWEL'];
+      let word = words[Math.floor(Math.random() * words.length)];
+      let scrambled = word.split('').sort(() => Math.random() - 0.5).join('');
+      let attempts = 0, won = false;
+      
+      function render() {
+        container.innerHTML = `
+          <div class="game-board">
+            <div class="status">${won ? 'صحيح!' : `المحاولات: ${attempts}`}</div>
+            <div class="scrambled-word">${scrambled}</div>
+            <div style="display: flex; gap: 10px; flex-direction: column; align-items: center;">
+              <input type="text" class="word-input" id="scrambleInput" placeholder="اكتب الكلمة" maxlength="${word.length}">
+              <button class="guess-btn" onclick="checkScramble()">تحقق</button>
+            </div>
+            <button class="reset-btn" style="margin-top: 16px;" onclick="initScramble(document.getElementById('gameContent'))">كلمة جديدة</button>
+          </div>
+        `;
+        if (!won) document.getElementById('scrambleInput').focus();
+      }
+      
+      window.checkScramble = () => {
+        const input = document.getElementById('scrambleInput').value.toUpperCase();
+        attempts++;
+        if (input === word) won = true;
+        render();
+      };
+      
+      render();
+    }
+
+    // ========== LIGHTS OUT ==========
+    function initLights(container) {
+      let lights = Array(25).fill(false);
+      let moves = 0;
+      
+      // Randomize
+      for (let i = 0; i < 25; i++) lights[i] = Math.random() > 0.5;
+      
+      function toggle(i) {
+        const size = 5, row = Math.floor(i / size), col = i % size;
+        lights[i] = !lights[i];
+        if (row > 0) lights[i - size] = !lights[i - size];
+        if (row < 4) lights[i + size] = !lights[i + size];
+        if (col > 0) lights[i - 1] = !lights[i - 1];
+        if (col < 4) lights[i + 1] = !lights[i + 1];
+      }
+      
+      function render() {
+        const won = lights.every(l => !l);
+        container.innerHTML = `
+          <div class="game-board">
+            <div class="status">${won ? 'فزت!' : `الحركات: ${moves}`}</div>
+            <div class="lights-grid">
+              ${lights.map((on, i) => `
+                <button class="light-cell ${on ? 'on' : 'off'}" onclick="lightClick(${i})"></button>
+              `).join('')}
+            </div>
+            <button class="reset-btn" onclick="initLights(document.getElementById('gameContent'))">إعادة اللعب</button>
+          </div>
+        `;
+      }
+      
+      window.lightClick = (i) => {
+        toggle(i);
+        moves++;
+        render();
+      };
+      
+      render();
+    }
+  </script>
+</body>
+</html>
